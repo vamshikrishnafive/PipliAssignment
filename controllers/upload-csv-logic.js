@@ -10,7 +10,7 @@ const uploadCsv = (file) => {
             .catch(err => console.error(err) )
         })
         .on("end", () => { fs.unlinkSync(file.path) })
-    return ({ fileUrl: `http://192.168.0.7:3000/CSV/${file.filename}` });
+    return ({ fileUrl: `http://192.168.0.7:3000/get-all` });
 };
 
 exports.uploadCsv = uploadCsv
