@@ -1,15 +1,14 @@
 const express = require('express');
 require('dotenv').config();
 const multer = require("multer");
-const app = express();
 require("dotenv").config()
 
 const workerCon = require("./controllers/upload-csv-worker")
 const Utilities = require('./controllers/upload-csv');
 let storage = require('./controllers/multer_storage.js')
 
+const app = express();
 app.use(express.json());
-
 const upload = multer({ storage: storage });
 
 app.get('/', (req, res) => { res.send("Hello World") })
@@ -19,9 +18,9 @@ app.post('/upload-csv', upload.single('file'), async (req, res) => {
     let workerPool = null;
     if (process.env.WORKER_POOL_ENABLED === '1') {
         workerPool = workerCon.get();
-        result = await workerPool.uploadCsvSync(file);
+        result = await workerPool.uploadCsv(file);
     } else {
-        result = await Utilities.uploadCsvSync(file);
+        result = await Utilities.uploadCsv(file);
     }
     res.status(201).json(result);
 });

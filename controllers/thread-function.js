@@ -3,10 +3,10 @@
 const WorkerPool = require('workerpool')
 const Utilities = require('./upload-csv')
 
-const uploadCsvSync = (file) => {
+const uploadCsv = (file) => {
     return Utilities.uploadCsvSync(file);
 }
 
 WorkerPool.worker({
-    uploadCsvSync
+    uploadCsv
 })
