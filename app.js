@@ -1,32 +1,38 @@
-const express = require('express');
-require('dotenv').config();
-const multer = require("multer");
-require("dotenv").config()
-const mongoose = require('mongoose')
+require('dotenv').config(); 
 
+const express = require('express');
+const mongoose = require('mongoose');
+const http = require('https')
 
 const workerCon = require("./controllers/upload-csv-worker")
 const Utilities = require('./controllers/upload-csv-logic');
 const policy = require('./models/policy');
-let storage = require('./controllers/multer-storage.js');
-const { $where } = require('./models/policy');
-
 
 const app = express();
 app.use(express.json());
-const upload = multer({ storage: storage });
 
 app.get('/', (req, res) => { res.send("Hello World") })
-app.post('/upload-csv', upload.single('file'), async (req, res) => {
+app.post('/upload-csv', async (req, res) => {
     let file = req.file;
     let result;
-    result = await Utilities.uploadCsv(file);
+    let workerpool = workerCon.get();
+    result = await workerpool.uploadCsv(file);
     res.status(201).json(result);
 });
 app.get('/get-policy-details', async (req, res) => {
     try {
         let userName = req.query.userName;
-        let result = await policy.findOne({userName});
+        let result = await policy.findOne({ userName });
+        res.status(200).json(result)
+    } catch (error) {
+        console.error(error)
+        res.status(400).json({ Error: "NotFound" })
+    }
+});
+app.get('/get-all', async (req, res) => {
+    try {
+        let userName = req.query.userName;
+        let result = await policy.find();
         res.status(200).json(result)
     } catch (error) {
         console.error(error)
